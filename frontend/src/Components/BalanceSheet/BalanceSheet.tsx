@@ -92,6 +92,7 @@ const BalanceSheet = (props: Props) => {
   return (
     <>
       {companyData ? (
+        
         <RatioList config={config} data={companyData} />
       ) : (
        <>Loading...</>
