@@ -8,6 +8,7 @@ import {
   formatLargeNonMonetaryNumber,
   formatRatio,
 } from "../../Helpers/NumberFormatting";
+import Spinner from '../Spinners/Spinner';
 
 
 type Props = {};
@@ -91,7 +92,9 @@ const IncomeStatement = (props: Props) => {
   }, [])
   return (
     <>
-      {incomeStatement ? (<><Table configs={configs} data = {incomeStatement}/></>) : (<>Loading..</>) }
+      {incomeStatement ? (<><Table configs={configs} data = {incomeStatement}/></>) : (
+         <Spinner/>
+        ) }
     </>
   )
 }

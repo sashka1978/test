@@ -8,6 +8,7 @@ import {
     formatLargeMonetaryNumber,
     formatLargeNonMonetaryNumber,
   } from "../../Helpers/NumberFormatting";
+import Spinner from "../Spinners/Spinner";
   
 type Props = {};
 
@@ -95,7 +96,7 @@ const BalanceSheet = (props: Props) => {
         
         <RatioList config={config} data={companyData} />
       ) : (
-       <>Loading...</>
+      <Spinner/>
       )}
     </>
   );
