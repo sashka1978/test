@@ -11,10 +11,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api.Controllers
 {
-    [ApiController]
     [Route("api/account")]
-    public class AccountController :ControllerBase
-    {   
+    [ApiController]
+    public class AccountController : ControllerBase
+    {
         private readonly UserManager<AppUser> _userManager;
         private readonly ITokenService _tokenService;
         private readonly SignInManager<AppUser> _signinManager;
@@ -24,76 +24,75 @@ namespace api.Controllers
             _tokenService = tokenService;
             _signinManager = signInManager;
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginDto loginDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == loginDto.Username.ToLower());
+
+            if (user == null) return Unauthorized("Invalid username!");
+
+            var result = await _signinManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
+
+            if (!result.Succeeded) return Unauthorized("Username not found and/or password incorrect");
+
+            return Ok(
+                new NewUserDto
+                {
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    Token = _tokenService.CreateToken(user)
+                }
+            );
+        }
+
         [HttpPost("register")]
-        public async Task<IActionResult> Register ([FromBody] RegisterDto registerDtp)
+        public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
             try
             {
-                if(!ModelState.IsValid)
+                if (!ModelState.IsValid)
                     return BadRequest(ModelState);
+
                 var appUser = new AppUser
                 {
-                    UserName = registerDtp.UserName,
-                    Email = registerDtp.Email
+                    UserName = registerDto.UserName,
+                    Email = registerDto.Email
                 };
-                var createUser = await _userManager.CreateAsync(appUser, registerDtp.Password);
-                if(createUser.Succeeded)
+
+                var createdUser = await _userManager.CreateAsync(appUser, registerDto.Password);
+
+                if (createdUser.Succeeded)
                 {
-                    IdentityResult result = new IdentityResult();
-                    if(!registerDtp.IsAdmin)
-                    {
-                         result = await _userManager.AddToRoleAsync(appUser, "User");
-                    }
-                    else
-                    {
-                        result = await _userManager.AddToRoleAsync(appUser, "Admin");
-                    }
-                    if(result.Succeeded)
+                    var roleResult = await _userManager.AddToRoleAsync(appUser, "User");
+                    if (roleResult.Succeeded)
                     {
                         return Ok(
-                            new NewUserDto{
+                            new NewUserDto
+                            {
                                 UserName = appUser.UserName,
-                                Email  = appUser.Email,
+                                Email = appUser.Email,
                                 Token = _tokenService.CreateToken(appUser)
                             }
                         );
                     }
                     else
                     {
-                        return StatusCode(500,result.Errors);
+                        return StatusCode(500, roleResult.Errors);
                     }
                 }
                 else
                 {
-                     return StatusCode(500,createUser.Errors);
+                    return StatusCode(500, createdUser.Errors);
                 }
             }
-            catch(Exception ex)
+            catch (Exception e)
             {
-                 return StatusCode(500, ex);
+                return StatusCode(500, e);
             }
-        }
-        [HttpPost("login")]
-        public async Task<IActionResult> Login (LoginDto loginDto)
-        {
-            if(!ModelState.IsValid)
-                return BadRequest(ModelState);
-            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == loginDto.Username.ToLower());
-
-            if(user == null) return Unauthorized("Invalid username!");
-
-            var result = await _signinManager.CheckPasswordSignInAsync(user,loginDto.Password, false);
-
-            if(!result.Succeeded)
-                return Unauthorized("Username not found and/or password incorrect");
-
-            return Ok(
-                new NewUserDto{
-                    UserName = user.UserName,
-                    Email = user.Email,
-                    Token = _tokenService.CreateToken(user)
-                }
-            );
         }
     }
 }
