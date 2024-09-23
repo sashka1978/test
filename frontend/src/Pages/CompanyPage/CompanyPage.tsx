@@ -29,9 +29,9 @@ const CompanyPage = (props: Props) => {
         <Sidebar/>
         <CompanyDashboard ticker={ticker!}>
           <Tile title="Company Name" subTitle={company.companyName}></Tile>
-          <Tile title="Price" subTitle={company.price.toString()}></Tile>
+          <Tile title="Price" subTitle={"$" + company.price.toString()}></Tile>
           <Tile title="Sector" subTitle={company.sector}></Tile>
-          <Tile title="DCF" subTitle={company.dcf.toString()}></Tile>
+          <Tile title="DCF" subTitle={"$" + company.dcf.toString()}></Tile>
          {/* <CompFinder ticker={company.symbol} /> */}
          <TenKFinder ticker={company.symbol} />
           <p className="bg-white shadow rounded text-medium text-gray-900 p-3 mt-1 m-4">
