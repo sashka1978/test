@@ -1,9 +1,9 @@
-import { Outlet } from 'react-router';
-import './App.css';
-import Navbar from './Components/Navbar/Navbar';
-import { Toast, ToastContainer } from 'react-toastify/dist/components';
+import { Outlet } from "react-router";
+import Navbar from "./Components/Navbar/Navbar";
 import "react-toastify/dist/ReactToastify.css";
-import { UserProvider } from './Context/useAuth';
+import "./App.css";
+import { ToastContainer } from "react-toastify";
+import { UserProvider } from "./Context/useAuth";
 function App() { 
   return (
    <>
