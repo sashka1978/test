@@ -4,6 +4,7 @@ import { commentGetAPI, commentPostAPI } from "../../Services/CommentService";
 import { toast } from "react-toastify";
 import { CommentGet } from "../../Models/Comments";
 import Spinner from "../Spinners/Spinner";
+import StockCommentList from "../StockCommentList/StockCommentList";
 // import StockCommentList from "../StockCommentList/StockCommentList";
 
 type Props = {
@@ -45,7 +46,7 @@ const StockComment = ({ stockSymbol }: Props) => {
   };
   return (
     <div className="flex flex-col">
-      {/* {loading ? <Spinner /> : <StockCommentList comments={comments!} />} */}
+      {loading ? <Spinner /> : <StockCommentList comments={comments!} />}
       <StockCommentForm symbol={stockSymbol} handleComment={handleComment} />
     </div>
   );
